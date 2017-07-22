@@ -43,6 +43,7 @@ class Repo
   fetch()
   {
     if (DEVELOPMENT) {
+      this.image = SAMPLE_REPO.owner.avatar_url
       this.description = SAMPLE_REPO.description;
       this.openIssues = Math.random();
       this.forks = Math.random();
@@ -59,6 +60,7 @@ class Repo
       return response.json();
     })
     .then(data => {
+      this.image = data.owner.avatar_url;
       this.openIssues = data.open_issues_count;      
       this.forks = data.forks_count;      
       this.description = data.description;
@@ -67,7 +69,14 @@ class Repo
   }
   toTableRowElement () {
     const row = document.createElement('tr');
-    [this.repoName, this.description, this.numberOfPulls, this.forks, this.openIssues].forEach(stat => {
+    const nameCol = document.createElement('td');
+    nameCol.appendChild(document.createTextNode(this.repoName));
+    const image = document.createElement('img');
+    image.src = this.image;
+    console.log(image);
+    nameCol.appendChild(image);
+    row.appendChild(nameCol);
+    [this.description, this.numberOfPulls, this.forks, this.openIssues].forEach(stat => {
       const col = document.createElement('td');
       col.innerHTML = stat || '';
       row.appendChild(col);
