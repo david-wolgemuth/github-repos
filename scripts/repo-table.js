@@ -16,19 +16,29 @@ class RepoTable
         case 0:
           return repoA.repoName > repoB.repoName;
         case 1:
-          return repoB.numberOfPulls - repoA.numberOfPulls;
+          return repoA.description > repoB.description;
         case 2:
-          return repoB.forks - repoA.forks;
+          return repoB.numberOfPulls - repoA.numberOfPulls;
         case 3:
+          return repoB.forks - repoA.forks;
+        case 4:
           return repoB.openIssues - repoA.openIssues;
       }
     });
-    this.tbody.innerHTML = '';
-    this.rows.forEach(row => {
-      this.tbody.appendChild(row.toTableRowElement());
-    });
+    this.setRows();
     this.setAllThInactive();
     this.thElements[colNum].classList.add('active');
+  }
+  setRows ()
+  {
+    const filter = document.getElementsByName('search')[0].value;
+    this.tbody.innerHTML = '';
+    this.rows.forEach(row => {
+      if (filter && !row.filtered(filter)) {
+        return;
+      }
+      this.tbody.appendChild(row.toTableRowElement());
+    });
   }
   setAllThInactive ()
   {

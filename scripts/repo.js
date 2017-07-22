@@ -35,6 +35,7 @@ class Repo
   constructor (repoName)
   {
     this.repoName = repoName;
+    this.description = '';
     this.numberOfPulls = 0;
     this.openIssues = 0;
     this.forks = 0;
@@ -42,28 +43,43 @@ class Repo
   fetch()
   {
     if (DEVELOPMENT) {
-      this.repoData = window.SAMPLE_REPO;
+      this.description = SAMPLE_REPO.description;
       this.openIssues = Math.random();
       this.forks = Math.random();
       this.numberOfPulls = Math.floor(Math.random() * 120);
       return Promise.resolve(null);
     }
     return fetchGitHub('/repos/' + this.repoName)
-    .then(response => response.json())
+    .then(response => {
+      if (response.status == 403) {
+        document.getElementById('access-error').innerHTML = '<br><span class="alert alert-danger">ACCESS TOKEN REQUIRED</span>';
+      } else {
+        document.getElementById('access-error').innerHTML = '';
+      }
+      return response.json();
+    })
     .then(data => {
       this.openIssues = data.open_issues_count;      
       this.forks = data.forks_count;      
+      this.description = data.description;
       return this._getNumberOfPulls();
     });
   }
   toTableRowElement () {
     const row = document.createElement('tr');
-    [this.repoName, this.numberOfPulls, this.forks, this.openIssues].forEach(stat => {
+    [this.repoName, this.description, this.numberOfPulls, this.forks, this.openIssues].forEach(stat => {
       const col = document.createElement('td');
-      col.innerHTML = stat;
+      col.innerHTML = stat || '';
       row.appendChild(col);
     });
     return row;
+  }
+  filtered (filter) {
+    filter = filter.toLowerCase();
+    if (this.repoName.toLowerCase().indexOf(filter) >= 0 || this.description.toLowerCase().indexOf(filter) >= 0) {
+      return true;
+    }
+    return false;
   }
   _getNumberOfPulls ()
   {

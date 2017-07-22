@@ -23,6 +23,11 @@ document.addEventListener('DOMContentLoaded', function () {
     table.addFramework(name);
   });
 
+  const filterButton = document.getElementsByName('search')[0];
+  filterButton.addEventListener('keyup', () => {
+    table.setRows();
+  });
+
   table.refresh();
 });
 
