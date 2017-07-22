@@ -1,4 +1,4 @@
-const DEVELOPMENT = true;
+const DEVELOPMENT = false;
 
 const API_ROOT = 'https://api.github.com';
 const HEADERS = new Headers();
@@ -13,35 +13,47 @@ class Repo
 {
   constructor (repoName)
   {
-    this._repoName = repoName;
-    this._repoData = null;
-    this._pulls    = [];
-    this.numberOfPulls = null;
+    this.repoName = repoName;
+    this.numberOfPulls = 0;
+    this.openIssues = 0;
+    this.forks = 0;
   }
   fetch()
   {
     if (DEVELOPMENT) {
-      this._repoData = window.SAMPLE_REPO;
-      this.numberOfPulls = 12;
+      this.repoData = window.SAMPLE_REPO;
+      this.openIssues = Math.random();
+      this.forks = Math.random();
+      this.numberOfPulls = Math.floor(Math.random() * 120);
       return Promise.resolve(null);
     }
-    return fetch(`${API_ROOT}/repos/${this._repoName}`, FETCH_OPTIONS)
+    return fetch(`${API_ROOT}/repos/${this.repoName}`, FETCH_OPTIONS)
     .then(response => response.json())
     .then(data => {
-      this._repoData = data;
+      this.openIssues = data.open_issues_count;      
+      this.forks = data.forks_count;      
       return this._getNumberOfPulls();
     });
   }
+  toTableRowElement () {
+    const row = document.createElement('tr');
+    [this.repoName, this.numberOfPulls, this.forks, this.openIssues].forEach(stat => {
+      const col = document.createElement('td');
+      col.innerHTML = stat;
+      row.appendChild(col);
+    });
+    return row;
+  }
   _getNumberOfPulls ()
   {
-    return fetch(`${API_ROOT}/repos/${this._repoName}/pulls`, FETCH_OPTIONS)
+    return fetch(`${API_ROOT}/repos/${this.repoName}/pulls`, FETCH_OPTIONS)
     .then(response => {
       const pagString = response.headers.get('Link');
       const reg = /page=(\d)/g;
       if (reg.exec(pagString)) {
         let numberOfPages = parseInt(reg.exec(pagString)[1]);
         this.numberOfPulls = (numberOfPages-1) * 30;
-        return fetch(`${API_ROOT}/repos/${this._repoName}/pulls?page=${numberOfPages}`)
+        return fetch(`${API_ROOT}/repos/${this.repoName}/pulls?page=${numberOfPages}`)
         .then(response => response.json()).then(pulls => {
           this.numberOfPulls += pulls.length;
         });

@@ -7,17 +7,36 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
   <script src="scripts/sample-repo.js"></script>
   <script src="scripts/repo.js"></script>
+  <script src="scripts/sorter.js"></script>
   <script src="scripts/main.js"></script>
+  <style>
+    th {
+      cursor: pointer;
+    }
+    th.active {
+      background: #292b2c;
+      color: white;
+    }
+  </style>
   <title>Document</title>
 </head>
 <body>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>Framework</th>
-        <th>Framework</th>
-      </tr>
-    </thead>
-  </table>
+  <div class="container">
+    <h1 style="text-align:center">Top JS Frameworks</h1>
+    <button class="btn btn-secondary" id="refresh">Refresh List</button>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="active">Framework</th>
+          <th>Open Pull Requests</th>
+          <th>Forks</th>
+          <th>Open Issues</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- REPO DATA GOES HERE  -->
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
