@@ -1,11 +1,7 @@
 const DEVELOPMENT = false;
 
 const API_ROOT = 'https://api.github.com';
-const ACCESS_TOKEN = prompt(`
-  Please Enter Your GitHub Personal Access Token
-  (Press cancel if you haven't yet reached your daily api limit)
-  https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line
-`);
+const ACCESS_TOKEN = null;
 const HEADERS = new Headers();
 const FETCH_OPTIONS = {
   method: 'GET',
@@ -18,6 +14,11 @@ const fetchGitHub = (endpoint, options={}) => {
   let url = `${API_ROOT}${endpoint}`;
   if (ACCESS_TOKEN) {
     options.access_token = ACCESS_TOKEN;
+  } else {
+    let token = document.getElementsByName('access_token')[0].value;
+    if (token) {
+      options.access_token = token;
+    }
   }
   const keys = Object.keys(options);
   if (keys.length) {

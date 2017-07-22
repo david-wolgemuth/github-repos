@@ -22,7 +22,19 @@
 <body>
   <div class="container">
     <h1 style="text-align:center">Top JS Frameworks</h1>
-    <button class="btn btn-secondary" id="refresh">Refresh List</button>
+    <div>
+      <input type="text" class="form-control" name="access_token" placeholder="GitHub Personal Access Token">
+      <div>
+        <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">How Do I Get An Access Token?</a>
+      </div>
+      <button class="btn btn-secondary" id="refresh">Refresh List</button>
+    </div>
+    <h3>Add Another Framework</h3>
+    <div>
+      <input type="text" class="form-control" name="framework" placeholder="angular/angular">
+      <button id="add-framework">Add Framework</button>
+    </div>
+    
     <table class="table table-striped">
       <thead>
         <tr>

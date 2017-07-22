@@ -44,6 +44,11 @@ class RepoTable
       this.sortByCol(0);
     });
   }
+  addFramework (name)
+  {
+    this.rows.push(new Repo(name));
+    this.refresh();
+  }
   _addListenersToThElements ()
   {
     const clickHeader = (index) => (

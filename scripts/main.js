@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', function () {
   refreshButton.addEventListener('click', () => {
     table.refresh();
   });
+
+  const addButton = document.getElementById('add-framework');
+  addButton.addEventListener('click', () => {
+    let input = document.getElementsByName('framework')[0]
+    let name = input.value;
+    input.value = '';
+    table.addFramework(name);
+  });
+
   table.refresh();
 });
 
