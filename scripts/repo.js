@@ -1,12 +1,32 @@
 const DEVELOPMENT = false;
 
 const API_ROOT = 'https://api.github.com';
+const ACCESS_TOKEN = prompt(`
+  Please Enter Your GitHub Personal Access Token
+  (Press cancel if you haven't yet reached your daily api limit)
+  https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line
+`);
 const HEADERS = new Headers();
 const FETCH_OPTIONS = {
   method: 'GET',
   headers: HEADERS,
   mode: 'cors',
   cache: 'default'
+};
+
+const fetchGitHub = (endpoint, options={}) => {
+  let url = `${API_ROOT}${endpoint}`;
+  if (ACCESS_TOKEN) {
+    options.access_token = ACCESS_TOKEN;
+  }
+  const keys = Object.keys(options);
+  if (keys.length) {
+    url += `?${keys[0]}=${options[keys[0]]}`;
+  }
+  for (let i = 1; i < keys.length; i += 1) {
+    url += `&${keys[i]}=${options[keys[i]]}`;
+  }
+  return fetch(url, FETCH_OPTIONS);
 };
 
 class Repo
@@ -27,7 +47,7 @@ class Repo
       this.numberOfPulls = Math.floor(Math.random() * 120);
       return Promise.resolve(null);
     }
-    return fetch(`${API_ROOT}/repos/${this.repoName}`, FETCH_OPTIONS)
+    return fetchGitHub('/repos/' + this.repoName)
     .then(response => response.json())
     .then(data => {
       this.openIssues = data.open_issues_count;      
@@ -46,14 +66,14 @@ class Repo
   }
   _getNumberOfPulls ()
   {
-    return fetch(`${API_ROOT}/repos/${this.repoName}/pulls`, FETCH_OPTIONS)
+    return fetchGitHub(`/repos/${this.repoName}/pulls`)
     .then(response => {
       const pagString = response.headers.get('Link');
       const reg = /page=(\d)/g;
       if (reg.exec(pagString)) {
         let numberOfPages = parseInt(reg.exec(pagString)[1]);
         this.numberOfPulls = (numberOfPages-1) * 30;
-        return fetch(`${API_ROOT}/repos/${this.repoName}/pulls?page=${numberOfPages}`)
+        return fetchGitHub(`/repos/${this.repoName}/pulls`, { page: numberOfPages })
         .then(response => response.json()).then(pulls => {
           this.numberOfPulls += pulls.length;
         });
